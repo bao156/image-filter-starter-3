@@ -30,31 +30,34 @@ import { filterImageFromURL, deleteLocalFiles } from "./util/util";
 
   // Root Endpoint
   // Displays a simple message to the user
-  app.get("/filteredimage", async (req, res) => {
-    let image_url = req.query.image_url;
-    //Validate url
-    const isValidImageUrl = /\.(jpg|jpeg)$/.test(image_url);
-    if (!isValidImageUrl) {
-      return res.status(400).send(`Inavlid url! Try again with valid url`);
-    } else {
-      const filePath = await filterImageFromURL(image_url);
-      res.sendFile(
-        filePath,
-        {
-          headers: {
-            "Content-Type": "image/jpeg", // Change 'application/octet-stream' to the appropriate MIME type
+  app.get(
+    "/filteredimage",
+    async (req: express.Request, res: express.Response) => {
+      let image_url = req.query.image_url;
+      //Validate url
+      const isValidImageUrl = /\.(jpg|jpeg)$/.test(image_url);
+      if (!isValidImageUrl) {
+        return res.status(400).send(`Inavlid url! Try again with valid url`);
+      } else {
+        const filePath = await filterImageFromURL(image_url);
+        res.sendFile(
+          filePath,
+          {
+            headers: {
+              "Content-Type": "image/jpg", // Change 'application/octet-stream' to the appropriate MIME type
+            },
           },
-        },
-        function (err) {
-          if (err) {
-            console.error("Error sending file:", err);
-          } else {
-            deleteLocalFiles([filePath]);
+          function (err) {
+            if (err) {
+              console.error("Error sending file:", err);
+            } else {
+              deleteLocalFiles([filePath]);
+            }
           }
-        }
-      );
+        );
+      }
     }
-  });
+  );
 
   app.get("/", async (req, res) => {
     res.send("try GET /filteredimage?image_url={{}}");
